@@ -1,6 +1,6 @@
 # SlideOverCard
 
-
+![sample](./static/sample.png)
 
 ## Installation with Swift Package Manager
 
@@ -20,6 +20,7 @@ import SlideOverCard
 struct ContentView : View {
     var body: some View {
         ZStack(alignment: Alignment.top) {
+            
             MapView()
             SlideOverCard {
                 VStack {
@@ -46,9 +47,4 @@ struct MapView : UIViewRepresentable {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
 ```

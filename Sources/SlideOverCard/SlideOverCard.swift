@@ -1,12 +1,16 @@
 import SwiftUI
 
 @available(iOS 13.0, *)
-public struct SlideOverCard<Content: View> : View {
+public struct SlideOverCard<Content> : View where Content : View {
     @GestureState private var dragState = DragState.inactive
     @State var position = CardPosition.middle
     @Environment(\.colorScheme) var colorScheme: ColorScheme
-    
     var content: () -> Content
+
+    public init(content: @escaping () -> Content) {
+        self.content = content
+    }
+     
     public var body: some View {
         ZStack {
             BlurView(style: colorScheme == .dark ? .dark : .extraLight)
@@ -25,7 +29,7 @@ public struct SlideOverCard<Content: View> : View {
             }
             .onEnded(onDragEnded))
     }
-    
+        
     private func onDragEnded(drag: DragGesture.Value) {
         let verticalDirection = drag.predictedEndLocation.y - drag.location.y
         let cardTopEdgeLocation = self.position.rawValue + drag.translation.height
