@@ -1,13 +1,13 @@
 import SwiftUI
 
 @available(iOS 13.0, *)
-struct SlideOverCard<Content: View> : View {
+public struct SlideOverCard<Content: View> : View {
     @GestureState private var dragState = DragState.inactive
     @State var position = CardPosition.middle
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     
     var content: () -> Content
-    var body: some View {
+    public var body: some View {
         ZStack {
             BlurView(style: colorScheme == .dark ? .dark : .extraLight)
             VStack {

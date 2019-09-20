@@ -10,7 +10,7 @@ Swift Package Manager is integrated within Xcode 11:
 2. Paste the repository URL: https://github.com/moifort/SlideOverCard.git
 
 
-## How to use it
+## Usage
 
 ```swift
 import SwiftUI
