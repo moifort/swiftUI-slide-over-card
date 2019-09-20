@@ -4,7 +4,7 @@
 
 ## Installation with Swift Package Manager
 
-Swift Package Manager is integrated within Xcode 11, so using Tangerine in your project is a piece of cake:
+Swift Package Manager is integrated within Xcode 11:
 
 1. File → Swift Packages → Add Package Dependency...
 2. Paste the repository URL: https://github.com/moifort/SlideOverCard.git

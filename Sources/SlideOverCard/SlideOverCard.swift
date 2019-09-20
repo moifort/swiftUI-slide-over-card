@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(iOS 13.0, *)
 struct SlideOverCard<Content: View> : View {
     @GestureState private var dragState = DragState.inactive
     @State var position = CardPosition.middle
@@ -56,6 +57,7 @@ struct SlideOverCard<Content: View> : View {
     }
 }
 
+@available(iOS 13.0, *)
 struct BlurView: UIViewRepresentable {
     let style: UIBlurEffect.Style
 
@@ -75,6 +77,17 @@ struct BlurView: UIViewRepresentable {
 
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<BlurView>) {}
 
+}
+
+@available(iOS 13.0, *)
+struct Handle : View {
+    private let handleThickness = CGFloat(5.0)
+    var body: some View {
+        RoundedRectangle(cornerRadius: handleThickness / 2.0)
+            .frame(width: 40, height: handleThickness)
+            .foregroundColor(Color.secondary)
+            .padding(5)
+    }
 }
 
 enum CardPosition: CGFloat {
