@@ -1,4 +1,4 @@
-# SlideOverCard
+# Slide Over Card for SwiftUI
 
 ![sample](./static/sample.png)
 ![sample](./static/sample.gif)
