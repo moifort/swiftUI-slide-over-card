@@ -1,3 +1,4 @@
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/moifort/swiftUI-slide-over-card)
 # Slide Over Card for SwiftUI
 
 ![sample](./static/sample.png)
