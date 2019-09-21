@@ -16,13 +16,13 @@ Swift Package Manager is integrated within Xcode 11:
 ```swift
 import SwiftUI
 import MapKit
-import SlideOverCard
+import SlideOverCard // Add import
 
 struct ContentView : View {
     var body: some View {
         ZStack(alignment: Alignment.top) {
-            
             MapView()
+            // Set your card
             SlideOverCard {
                 VStack {
                     Text("Slide Over Card").font(.title)
