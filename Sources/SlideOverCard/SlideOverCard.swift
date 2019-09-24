@@ -4,11 +4,14 @@ import SwiftUI
 public struct SlideOverCard<Content> : View where Content : View {
     @GestureState private var dragState = DragState.inactive
     @State var position = CardPosition.middle
+    private var defaultPosition = CardPosition.middle
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     var content: () -> Content
 
-    public init(content: @escaping () -> Content) {
+
+    public init(_ position: CardPosition = .middle, content: @escaping () -> Content) {
         self.content = content
+        self.defaultPosition = position
     }
      
     public var body: some View {
@@ -19,6 +22,7 @@ public struct SlideOverCard<Content> : View where Content : View {
                 self.content()
             }
         }
+        .onAppear{ self.position = self.defaultPosition }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         .cornerRadius(10.0)
         .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.13), radius: 10.0)
@@ -94,7 +98,7 @@ struct Handle : View {
     }
 }
 
-enum CardPosition: CGFloat {
+public enum CardPosition: CGFloat {
     case top = 100
     case middle = 500
     case bottom = 850
