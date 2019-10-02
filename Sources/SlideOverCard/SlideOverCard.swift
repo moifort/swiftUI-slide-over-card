@@ -1,11 +1,10 @@
 import SwiftUI
 
+
+
 @available(iOS 13.0, *)
 public struct SlideOverCard<Content> : View where Content : View {
-    @GestureState private var dragState = DragState.inactive
-    @State var position = CardPosition.middle
-    private var defaultPosition = CardPosition.middle
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    var defaultPosition : CardPosition
     var content: () -> Content
 
 
@@ -15,53 +14,132 @@ public struct SlideOverCard<Content> : View where Content : View {
     }
      
     public var body: some View {
-        ZStack {
-            BlurView(style: colorScheme == .dark ? .dark : .extraLight)
-            VStack {
-                Handle()
-                self.content()
-            }
+        ModifiedContent(content: self.content(), modifier: Card(position: self.defaultPosition))
+       }
+}
+
+public enum CardPosition: CGFloat {
+    
+    case bottom , middle, top
+    
+    func offsetFromTop() -> CGFloat {
+        switch self {
+        case .bottom:
+            return UIScreen.main.bounds.height - 80
+        case .middle:
+            return UIScreen.main.bounds.height/1.8
+        case .top:
+            return 80
         }
-        .onAppear{ self.position = self.defaultPosition }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .cornerRadius(10.0)
-        .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.13), radius: 10.0)
-        .offset(y: self.position.rawValue + self.dragState.translation.height)
-        .animation(self.dragState.isDragging ? nil : .spring())
-        .gesture(DragGesture().updating($dragState) { drag, state, transaction in
-                state = .dragging(translation: drag.translation)
-            }
-            .onEnded(onDragEnded))
     }
+}
+
+enum DragState {
+    
+    case inactive
+    case dragging(translation: CGSize)
+    
+    var translation: CGSize {
+        switch self {
+        case .inactive:
+            return .zero
+        case .dragging(let translation):
+            return translation
+        }
+    }
+    
+    var isDragging: Bool {
+        switch self {
+        case .inactive:
+            return false
+        case .dragging:
+            return true
+        }
+    }
+}
+
+
+
+struct Card: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @GestureState var dragState: DragState = .inactive
+    @State var position : CardPosition = .middle
+    @State var offset: CGSize = CGSize.zero
+    
+    var animation: Animation {
+        Animation.interpolatingSpring(stiffness: 300.0, damping: 30.0, initialVelocity: 10.0)
+    }
+    
+    var timer: Timer? {
+        return Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
+            if self.position == .top && self.dragState.translation.height == 0  {
+                self.position = .top
+            } else {
+                timer.invalidate()
+            }
+        }
+    }
+    
+    func body(content: Content) -> some View {
+        let drag = DragGesture()
+            .updating($dragState) { drag, state, transaction in state = .dragging(translation:  drag.translation) }
+            .onChanged {_ in
+                self.offset = .zero
+        }
+        .onEnded(onDragEnded)
         
+        return ZStack(alignment: .top) {
+            ZStack(alignment: .top) {
+                BlurView(style: colorScheme == .dark ? .dark : .extraLight)
+                Handle()
+                content.padding(.top, 15)
+            }
+            .mask(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .scaleEffect(x: 1, y: 1, anchor: .center)
+        }
+        .offset(y:  max(0, self.position.offsetFromTop() + self.dragState.translation.height))
+        .animation((self.dragState.isDragging ? nil : animation))
+        .gesture(drag)
+    }
+    
     private func onDragEnded(drag: DragGesture.Value) {
-        let verticalDirection = drag.predictedEndLocation.y - drag.location.y
-        let cardTopEdgeLocation = self.position.rawValue + drag.translation.height
-        let positionAbove: CardPosition
-        let positionBelow: CardPosition
-        let closestPosition: CardPosition
         
-        if cardTopEdgeLocation <= CardPosition.middle.rawValue {
-            positionAbove = .top
-            positionBelow = .middle
+        // Setting stops
+        let higherStop: CardPosition
+        let lowerStop: CardPosition
+        
+        // Nearest position for drawer to snap to.
+        let nearestPosition: CardPosition
+        
+        // Determining the direction of the drag gesture and its distance from the top
+        let dragDirection = drag.predictedEndLocation.y - drag.location.y
+        let offsetFromTopOfView = position.offsetFromTop() + drag.translation.height
+        
+        // Determining whether drawer is above or below `.partiallyRevealed` threshold for snapping behavior.
+        if offsetFromTopOfView <= CardPosition.middle.offsetFromTop() {
+            higherStop = .top
+            lowerStop = .middle
         } else {
-            positionAbove = .middle
-            positionBelow = .bottom
+            higherStop = .middle
+            lowerStop = .bottom
         }
         
-        if (cardTopEdgeLocation - positionAbove.rawValue) < (positionBelow.rawValue - cardTopEdgeLocation) {
-            closestPosition = positionAbove
+        // Determining whether drawer is closest to top or bottom
+        if (offsetFromTopOfView - higherStop.offsetFromTop()) < (lowerStop.offsetFromTop() - offsetFromTopOfView) {
+            nearestPosition = higherStop
         } else {
-            closestPosition = positionBelow
+            nearestPosition = lowerStop
         }
         
-        if verticalDirection > 0 {
-            self.position = positionBelow
-        } else if verticalDirection < 0 {
-            self.position = positionAbove
+        // Determining the drawer's position.
+        if dragDirection > 0 {
+            position = lowerStop
+        } else if dragDirection < 0 {
+            position = higherStop
         } else {
-            self.position = closestPosition
+            position = nearestPosition
         }
+        _ = timer
     }
 }
 
@@ -95,34 +173,5 @@ struct Handle : View {
             .frame(width: 40, height: handleThickness)
             .foregroundColor(Color.secondary)
             .padding(5)
-    }
-}
-
-public enum CardPosition: CGFloat {
-    case top = 100
-    case middle = 500
-    case bottom = 850
-}
-
-enum DragState {
-    case inactive
-    case dragging(translation: CGSize)
-    
-    var translation: CGSize {
-        switch self {
-        case .inactive:
-            return .zero
-        case .dragging(let translation):
-            return translation
-        }
-    }
-    
-    var isDragging: Bool {
-        switch self {
-        case .inactive:
-            return false
-        case .dragging:
-            return true
-        }
     }
 }

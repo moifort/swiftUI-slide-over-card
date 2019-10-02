@@ -66,3 +66,4 @@ struct MapView : UIViewRepresentable {
 ## Thanks
 
 * To @mshafer for the [snippet](https://gist.github.com/mshafer/7e05d0a120810a9eb49d3589ce1f6f40)
+* To @cyrilzakka for the [sample](https://github.com/cyrilzakka/SwiftUIModal)
