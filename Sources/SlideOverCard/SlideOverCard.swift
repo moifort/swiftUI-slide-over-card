@@ -90,7 +90,12 @@ struct Card: ViewModifier {
         
         return ZStack(alignment: .top) {
             ZStack(alignment: .top) {
-                BlurView(style: colorScheme == .dark ? .dark : .extraLight)
+                if (colorScheme == .dark) {
+                    Color.black
+                } else {
+                    Color.white
+                }
+                // BlurView(style: colorScheme == .dark ? .dark : .extraLight)
                 Handle()
                 content.padding(.top, 15)
             }
