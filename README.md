@@ -9,7 +9,7 @@
 Swift Package Manager is integrated within Xcode 11:
 
 1. File → Swift Packages → Add Package Dependency...
-2. Paste the repository URL: https://github.com/moifort/swiftUI-slide-over-card.git
+2. Paste the repository URL: https://github.com/ziligy/swiftUI-slide-over-card.git
 
 ## Set Slide position
 
@@ -29,7 +29,7 @@ SlideOverCard(.bottom) { // or .middle, .top
 By default background is 'solid'. If you want to change it for blur or clear, set like:
 
 ```swift
-SlideOverCard(backgroundStyle: .blur) { // or .solid, .clear
+SlideOverCard(backgroundStyle: .blur) { // or .clear or .solid
     VStack {
         Text("Slide Over Card").font(.title)
         Spacer()
