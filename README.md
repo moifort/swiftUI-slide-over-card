@@ -24,6 +24,19 @@ SlideOverCard(.bottom) { // or .middle, .top
 }
 ```
 
+## Set Background Style
+
+By default background is 'solid'. If you want to change it for blur or clear, set like:
+
+```swift
+SlideOverCard(backgroundStyle: .blur) { // or .clear or .solid
+    VStack {
+        Text("Slide Over Card").font(.title)
+        Spacer()
+    }
+}
+```
+
 ## Usage
 
 ```swift

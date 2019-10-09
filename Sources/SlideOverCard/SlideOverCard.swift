@@ -1,21 +1,26 @@
 import SwiftUI
 
 
-
 @available(iOS 13.0, *)
 public struct SlideOverCard<Content> : View where Content : View {
     var defaultPosition : CardPosition
     var content: () -> Content
+    var backgroundStyle: BackgroundStyle
 
 
-    public init(_ position: CardPosition = .middle, content: @escaping () -> Content) {
+    public init(_ position: CardPosition = .middle, backgroundStyle: BackgroundStyle = .solid, content: @escaping () -> Content) {
         self.content = content
         self.defaultPosition = position
+        self.backgroundStyle = backgroundStyle
     }
      
     public var body: some View {
-        ModifiedContent(content: self.content(), modifier: Card(position: self.defaultPosition))
+        ModifiedContent(content: self.content(), modifier: Card(position: self.defaultPosition, backgroundStyle: self.backgroundStyle))
        }
+}
+
+public enum BackgroundStyle {
+    case solid, clear, blur
 }
 
 public enum CardPosition: CGFloat {
@@ -64,6 +69,7 @@ struct Card: ViewModifier {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @GestureState var dragState: DragState = .inactive
     @State var position : CardPosition = .middle
+    @State var backgroundStyle: BackgroundStyle = .solid
     @State var offset: CGSize = CGSize.zero
     
     var animation: Animation {
@@ -90,12 +96,19 @@ struct Card: ViewModifier {
         
         return ZStack(alignment: .top) {
             ZStack(alignment: .top) {
-                if (colorScheme == .dark) {
-                    Color.black
-                } else {
-                    Color.white
+
+                if backgroundStyle == .blur {
+                    BlurView(style: colorScheme == .dark ? .dark : .extraLight)
                 }
-                // BlurView(style: colorScheme == .dark ? .dark : .extraLight)
+
+                if backgroundStyle == .clear {
+                    Color.clear
+                }
+
+                if backgroundStyle == .solid {
+                    colorScheme == .dark ? Color.black : Color.white
+                }
+
                 Handle()
                 content.padding(.top, 15)
             }
