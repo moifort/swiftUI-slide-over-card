@@ -1,7 +1,6 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/moifort/swiftUI-slide-over-card)
 # Slide Over Card for SwiftUI
 
-![sample](./static/sample.png)
 ![sample](./static/sample.gif)
 
 ## Installation with Swift Package Manager
@@ -12,6 +11,8 @@ Swift Package Manager is integrated within Xcode 11:
 2. Paste the repository URL: https://github.com/moifort/swiftUI-slide-over-card.git
 
 ## Set Slide position
+
+![sample](./static/sample-position.png)
 
 By default the slide is in `.middle` position. If you want to change it, set like:
 
@@ -25,6 +26,8 @@ SlideOverCard(.bottom) { // or .middle, .top
 ```
 
 ## Set Background Style
+
+![sample](./static/sample-background.png)
 
 By default background is 'solid'. If you want to change it for blur or clear, set like:
 

@@ -3,19 +3,18 @@ import SwiftUI
 
 @available(iOS 13.0, *)
 public struct SlideOverCard<Content> : View where Content : View {
-    var defaultPosition : CardPosition
+    @Binding var defaultPosition : CardPosition
+    @Binding var backgroundStyle: BackgroundStyle
     var content: () -> Content
-    var backgroundStyle: BackgroundStyle
-
-
-    public init(_ position: CardPosition = .middle, backgroundStyle: BackgroundStyle = .solid, content: @escaping () -> Content) {
+    
+    public init(_ position: Binding<CardPosition> = .constant(.middle), backgroundStyle: Binding<BackgroundStyle> = .constant(.solid), content: @escaping () -> Content) {
         self.content = content
-        self.defaultPosition = position
-        self.backgroundStyle = backgroundStyle
+        self._defaultPosition = position
+        self._backgroundStyle = backgroundStyle
     }
      
     public var body: some View {
-        ModifiedContent(content: self.content(), modifier: Card(position: self.defaultPosition, backgroundStyle: self.backgroundStyle))
+        ModifiedContent(content: self.content(), modifier: Card(position: self.$defaultPosition, backgroundStyle: self.$backgroundStyle))
        }
 }
 
@@ -68,8 +67,8 @@ enum DragState {
 struct Card: ViewModifier {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @GestureState var dragState: DragState = .inactive
-    @State var position : CardPosition = .middle
-    @State var backgroundStyle: BackgroundStyle = .solid
+    @Binding var position : CardPosition
+    @Binding var backgroundStyle: BackgroundStyle
     @State var offset: CGSize = CGSize.zero
     
     var animation: Animation {
