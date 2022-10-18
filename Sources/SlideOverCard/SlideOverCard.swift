@@ -24,6 +24,7 @@ public enum BackgroundStyle {
 
 public enum CardPosition: CGFloat {
     
+    
     case bottom , middle, top
     
     func offsetFromTop() -> CGFloat {
